@@ -932,15 +932,15 @@
     }, 600);
   }
 
-  // ── Buy: open PIN overlay ──
+  // ── Buy: open buy sheet directly ──
   function openSheet(size, val, price, orig) {
     const actualPrice = cardActive ? price : orig;
     cur = { size, val, price: actualPrice, orig };
-    buyPinEntry = '';
-    updateBuyPinDots('');
-    document.getElementById('buy-pin-err').classList.remove('show');
-    document.getElementById('buy-pin-lbl').textContent = '4-digit PIN';
-    document.getElementById('pin-buy-ov').classList.add('open');
+    document.getElementById('shtitle').textContent = 'Buy ' + size + ' Data';
+    document.getElementById('shsub').textContent = NET + ' · ' + val;
+    document.getElementById('dprice').textContent = '₦' + actualPrice.toLocaleString();
+    document.getElementById('phinput').value = '';
+    document.getElementById('ov').classList.add('open');
   }
 
   function updateBuyPinDots(val) {
@@ -966,11 +966,12 @@
   function checkBuyPin() {
     if (buyPinEntry === userPin) {
       document.getElementById('pin-buy-ov').classList.remove('open');
-      document.getElementById('shtitle').textContent = 'Buy ' + cur.size + ' Data';
-      document.getElementById('shsub').textContent = NET + ' · ' + cur.val;
-      document.getElementById('dprice').textContent = '\u20a6' + cur.price.toLocaleString();
-      document.getElementById('phinput').value = '';
-      document.getElementById('ov').classList.add('open');
+      document.getElementById('ov').classList.remove('open');
+      const ph2 = document.getElementById('phinput').value || 'your number';
+      updateBalance(cur.price);
+      document.getElementById('sbody').textContent = cur.size + ' delivered to ' + ph2;
+      document.getElementById('samt').textContent = '₦' + cur.price.toLocaleString() + ' deducted';
+      show('success');
     } else {
       const err = document.getElementById('buy-pin-err');
       err.textContent = 'Incorrect PIN. Try again.';
@@ -1022,12 +1023,12 @@
       setTimeout(() => { document.getElementById('phinput').style.outline = ''; }, 1500);
       return;
     }
-    document.getElementById('ov').classList.remove('open');
-    updateBalance(cur.price);
-    const ph2 = document.getElementById('phinput').value || 'your number';
-    document.getElementById('sbody').textContent = cur.size + ' delivered to ' + ph2;
-    document.getElementById('samt').textContent = '₦' + cur.price.toLocaleString() + ' deducted';
-    show('success');
+    // Phone valid — ask for PIN to authorize
+    buyPinEntry = '';
+    updateBuyPinDots('');
+    document.getElementById('buy-pin-err').classList.remove('show');
+    document.getElementById('buy-pin-lbl').textContent = '4-digit PIN';
+    document.getElementById('pin-buy-ov').classList.add('open');
   }
 
   // ── Check-in ──
