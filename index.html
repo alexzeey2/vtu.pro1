@@ -239,51 +239,7 @@
 
   .spc{height:28px}
 
-  /* ── Wrong card overlay ── */
-  #wrong-card-overlay{
-    position:absolute;inset:0;
-    background:rgba(10,8,20,0.82);backdrop-filter:blur(6px);
-    border-radius:20px;
-    display:flex;align-items:center;justify-content:center;
-    opacity:0;pointer-events:none;
-    transition:opacity .25s ease;
-    z-index:20;
-  }
-  #wrong-card-overlay.show{opacity:1;pointer-events:auto;}
-  #wrong-card-modal{
-    display:flex;flex-direction:column;align-items:center;gap:10px;
-    padding:28px 24px 24px;
-    background:rgba(30,12,6,0.92);
-    border:1.5px solid rgba(255,90,30,0.55);
-    border-radius:22px;
-    box-shadow:0 0 30px rgba(255,70,10,0.45),0 0 70px rgba(255,50,0,0.2);
-    width:78%;max-width:280px;
-    text-align:center;
-    animation:none;
-  }
-  #wrong-card-overlay.show #wrong-card-modal{
-    animation:wc-pop .25s cubic-bezier(.34,1.56,.64,1) forwards;
-  }
-  @keyframes wc-pop{
-    from{transform:scale(.88);opacity:0;}
-    to{transform:scale(1);opacity:1;}
-  }
-  #wrong-card-icon{
-    width:52px;height:52px;border-radius:50%;
-    background:rgba(220,55,10,0.18);
-    border:2px solid rgba(255,90,30,0.6);
-    display:flex;align-items:center;justify-content:center;
-    font-size:22px;color:#ff6020;
-    box-shadow:0 0 18px rgba(255,70,10,0.5),inset 0 0 12px rgba(255,80,20,0.15);
-    text-shadow:0 0 10px rgba(255,120,40,0.9);
-  }
-  #wrong-card-title{
-    font-size:17px;font-weight:800;color:#ff7030;letter-spacing:.3px;
-    text-shadow:0 0 16px rgba(255,100,30,0.7);
-  }
-  #wrong-card-body{
-    font-size:12.5px;color:rgba(255,200,170,0.75);line-height:1.6;
-  }
+
 </style>
 </head>
 <body>
@@ -299,36 +255,10 @@
 
   <div class="reg-box">
 
-    <!-- Step 1: Create password -->
-    <div class="reg-step active" id="reg-step-1">
-      <div class="reg-title">Create your account</div>
-      <div class="reg-sub">Choose an 8-character password to secure your account</div>
-
-      <div class="reg-field">
-        <div class="reg-field-lbl">Password</div>
-        <input type="password" id="reg-password" placeholder="8 characters" autocomplete="off" maxlength="8">
-      </div>
-      <div class="reg-err" id="reg-err-1"></div>
-      <button class="reg-btn" onclick="goRegStep2()">Continue</button>
-    </div>
-
-    <!-- Step 2: Confirm password -->
-    <div class="reg-step" id="reg-step-2">
-      <div class="reg-title">Confirm password</div>
-      <div class="reg-sub">Re-enter your password to confirm</div>
-
-      <div class="reg-field">
-        <div class="reg-field-lbl">Confirm Password</div>
-        <input type="password" id="reg-password-confirm" placeholder="8 characters" autocomplete="off" maxlength="8">
-      </div>
-      <div class="reg-err" id="reg-err-2"></div>
-      <button class="reg-btn" onclick="goRegStep3()">Continue</button>
-    </div>
-
-    <!-- Step 3: Scan QR card -->
-    <div class="reg-step" id="reg-step-3">
+    <!-- Step 1: Scan QR card -->
+    <div class="reg-step active" id="reg-step-2">
       <div class="reg-title">Scan your Tesira card</div>
-      <div class="reg-sub">Point your camera at the QR code on your card</div>
+      <div class="reg-sub">Hold your card up to the camera — we'll set you up automatically</div>
 
       <div style="position:relative;width:100%;border-radius:20px;overflow:hidden;margin-bottom:20px;background:var(--dark-3);border:1px solid var(--border);">
         <video id="reg-video" style="width:100%;display:block;border-radius:20px;" autoplay playsinline muted></video>
@@ -344,7 +274,35 @@
       </div>
 
       <div id="reg-scan-status" style="text-align:center;font-size:13px;color:var(--w40);margin-bottom:20px;">Starting camera...</div>
-      <div class="reg-err" id="reg-err-3"></div>
+      <div class="reg-err" id="reg-err-2"></div>
+    </div>
+
+    <!-- Step 3: Set PIN -->
+    <div class="reg-step" id="reg-step-3">
+      <div class="reg-title">Create your PIN</div>
+      <div class="reg-sub">This 4-digit PIN is how you'll confirm every data purchase</div>
+      <div class="reg-pin-lbl" id="reg-pin-lbl">Enter new PIN</div>
+      <div class="reg-dots" id="reg-pin-dots">
+        <div class="dot" id="rpd0"></div>
+        <div class="dot" id="rpd1"></div>
+        <div class="dot" id="rpd2"></div>
+        <div class="dot" id="rpd3"></div>
+      </div>
+      <div class="keypad">
+        <div class="key" onclick="regPinKey('1')">1</div>
+        <div class="key" onclick="regPinKey('2')">2</div>
+        <div class="key" onclick="regPinKey('3')">3</div>
+        <div class="key" onclick="regPinKey('4')">4</div>
+        <div class="key" onclick="regPinKey('5')">5</div>
+        <div class="key" onclick="regPinKey('6')">6</div>
+        <div class="key" onclick="regPinKey('7')">7</div>
+        <div class="key" onclick="regPinKey('8')">8</div>
+        <div class="key" onclick="regPinKey('9')">9</div>
+        <div class="key ghost"></div>
+        <div class="key" onclick="regPinKey('0')">0</div>
+        <div class="key" onclick="regPinDel()">⌫</div>
+      </div>
+      <div class="pin-err" id="reg-pin-err"></div>
     </div>
 
   </div>
@@ -752,35 +710,37 @@
   </div>
 </div>
 
-<!-- ── QR SCAN OVERLAY (purchase) ── -->
-<div class="overlay" id="qr-buy-ov">
+<!-- ── PIN ENTRY OVERLAY (purchase) ── -->
+<div class="overlay" id="pin-buy-ov">
   <div class="sheet" style="padding:28px 24px 44px;">
     <div class="sh-bar"></div>
-    <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-family:'Georgia',serif;font-size:22px;font-style:italic;margin-bottom:6px;">Scan your card</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.4);">Hold your Tesira card QR code up to the camera</div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-family:'Georgia',serif;font-size:22px;font-style:italic;margin-bottom:6px;">Enter your PIN</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);">Confirm your identity to continue</div>
     </div>
-    <div style="position:relative;width:100%;border-radius:20px;overflow:hidden;margin-bottom:16px;background:var(--dark-3);border:1px solid var(--border);">
-      <video id="buy-video" style="width:100%;display:block;border-radius:20px;" autoplay playsinline muted></video>
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
-        <div style="width:160px;height:160px;position:relative;">
-          <div style="position:absolute;top:0;left:0;width:32px;height:32px;border-top:3px solid var(--p-light);border-left:3px solid var(--p-light);border-radius:4px 0 0 0;"></div>
-          <div style="position:absolute;top:0;right:0;width:32px;height:32px;border-top:3px solid var(--p-light);border-right:3px solid var(--p-light);border-radius:0 4px 0 0;"></div>
-          <div style="position:absolute;bottom:0;left:0;width:32px;height:32px;border-bottom:3px solid var(--p-light);border-left:3px solid var(--p-light);border-radius:0 0 0 4px;"></div>
-          <div style="position:absolute;bottom:0;right:0;width:32px;height:32px;border-bottom:3px solid var(--p-light);border-right:3px solid var(--p-light);border-radius:0 0 4px 0;"></div>
-        </div>
-      </div>
-      <!-- Wrong card full overlay -->
-      <div id="wrong-card-overlay">
-        <div id="wrong-card-modal">
-          <div id="wrong-card-icon">✕</div>
-          <div id="wrong-card-title">Wrong Card</div>
-          <div id="wrong-card-body">This isn't your registered Tesira card.<br>Move camera away and try again.</div>
-        </div>
-      </div>
+    <div class="reg-pin-lbl" id="buy-pin-lbl">4-digit PIN</div>
+    <div class="reg-dots" style="margin-bottom:28px;">
+      <div class="dot" id="bpd0"></div>
+      <div class="dot" id="bpd1"></div>
+      <div class="dot" id="bpd2"></div>
+      <div class="dot" id="bpd3"></div>
     </div>
-    <div id="buy-scan-status" style="text-align:center;font-size:13px;color:var(--w40);margin-bottom:16px;">Waiting for QR code...</div>
-    <button class="pin-cancel" onclick="closeBuyScan()">Cancel</button>
+    <div class="keypad">
+      <div class="key" onclick="buyPinKey('1')">1</div>
+      <div class="key" onclick="buyPinKey('2')">2</div>
+      <div class="key" onclick="buyPinKey('3')">3</div>
+      <div class="key" onclick="buyPinKey('4')">4</div>
+      <div class="key" onclick="buyPinKey('5')">5</div>
+      <div class="key" onclick="buyPinKey('6')">6</div>
+      <div class="key" onclick="buyPinKey('7')">7</div>
+      <div class="key" onclick="buyPinKey('8')">8</div>
+      <div class="key" onclick="buyPinKey('9')">9</div>
+      <div class="key ghost"></div>
+      <div class="key" onclick="buyPinKey('0')">0</div>
+      <div class="key" onclick="buyPinDel()">⌫</div>
+    </div>
+    <div class="pin-err" id="buy-pin-err"></div>
+    <button class="pin-cancel" onclick="closePinBuy()" style="margin-top:16px;">Cancel</button>
   </div>
 </div>
 
@@ -791,15 +751,22 @@
   let balance = 1000;
   let cardActive = true;
   let cardTimer = null;
-  let registeredCard = null;   // stores the 10-digit code from registration scan
-  let cardSecret = null;       // stores the 4 digits extracted by the app
+  let registeredCard = null;
+  let cardSecret = null;
+  let userPin = null;
   let username = '';
 
-  // ── QR Scanner state ──
+  // ── QR Scanner state (registration only) ──
   let regStream = null;
-  let buyStream = null;
   let regScanLoop = null;
-  let buyScanLoop = null;
+
+  // ── Registration PIN state ──
+  let regPinEntry = '';
+  let regPinConfirm = '';
+  let regPinStage = 'enter';
+
+  // ── Buy PIN state ──
+  let buyPinEntry = '';
 
   // ── Balance ──
   function updateBalance(amount) {
@@ -812,41 +779,19 @@
   }
 
   // ── Extract 4-digit secret from 10-digit code ──
+  // Always picks positions 1, 4, 6, 9 (0-indexed) — only the app knows this
   function extractSecret(code10) {
     return code10[1] + code10[4] + code10[6] + code10[9];
   }
 
-  // ── Generate username from card number ──
-  function generateUsername(card10) {
-    const adjectives = ['swift','bold','bright','calm','cool','deep','fast','keen','pure','wise'];
-    const nouns = ['lion','eagle','river','stone','flame','tide','wind','spark','cloud','peak'];
-    const adj = adjectives[parseInt(card10[2]) % adjectives.length];
-    const noun = nouns[parseInt(card10[7]) % nouns.length];
-    const suffix = card10.slice(0, 4);
-    return adj + '_' + noun + '_' + suffix;
-  }
-
-  // ── Registration Step 1: validate password ──
-  function goRegStep2() {
-    const pw = document.getElementById('reg-password').value;
-    const err = document.getElementById('reg-err-1');
-    if (pw.length < 8) { showErr(err, 'Password must be 8 characters'); return; }
-    err.classList.remove('show');
-    document.getElementById('reg-step-1').classList.remove('active');
-    document.getElementById('reg-step-2').classList.add('active');
-    document.getElementById('reg-password-confirm').focus();
-  }
-
-  // ── Registration Step 2: confirm password ──
-  function goRegStep3() {
-    const pw = document.getElementById('reg-password').value;
-    const confirm = document.getElementById('reg-password-confirm').value;
-    const err = document.getElementById('reg-err-2');
-    if (confirm !== pw) { showErr(err, 'Passwords do not match'); return; }
-    err.classList.remove('show');
-    document.getElementById('reg-step-2').classList.remove('active');
-    document.getElementById('reg-step-3').classList.add('active');
-    startRegScan();
+  // ── Generate username from card code ──
+  const adjectives = ['swift','calm','bold','bright','cool','sharp','kind','wise','quick','pure'];
+  const nouns = ['star','wave','flame','stone','spark','cloud','river','hawk','peak','grove'];
+  function generateUsername(code10) {
+    const idx1 = parseInt(code10[0]) % adjectives.length;
+    const idx2 = parseInt(code10[9]) % nouns.length;
+    const suffix = code10.slice(7, 10);
+    return adjectives[idx1] + nouns[idx2] + suffix;
   }
 
   function showErr(el, msg) {
@@ -855,7 +800,7 @@
     setTimeout(() => el.classList.remove('show'), 2800);
   }
 
-  // ── Registration QR Scanner ──
+  // ── Registration QR Scanner — auto-starts on page load ──
   async function startRegScan() {
     try {
       regStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -866,7 +811,6 @@
       scanRegFrame();
     } catch (e) {
       document.getElementById('reg-scan-status').textContent = '⚠️ Camera blocked. Tap "Try Again" after allowing camera in your browser settings.';
-      // Show try again button
       const existing = document.getElementById('reg-try-again');
       if (!existing) {
         const btn = document.createElement('button');
@@ -880,6 +824,9 @@
     }
   }
 
+  // Auto-start camera when page loads
+  window.addEventListener('load', startRegScan);
+
   function scanRegFrame() {
     const video = document.getElementById('reg-video');
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -891,17 +838,14 @@
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
       if (code && code.data.length === 10 && /^\d{10}$/.test(code.data)) {
-        // Valid 10-digit code found
         stopStream(regStream);
         clearTimeout(regScanLoop);
         registeredCard = code.data;
         cardSecret = extractSecret(code.data);
-        // Generate username from card
         username = generateUsername(code.data);
-        const uid = Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('ref-link').textContent = 'tesira.app/ref/' + uid + username.toUpperCase();
-        document.getElementById('reg-scan-status').textContent = '✓ Card linked successfully!';
-        setTimeout(finishReg, 800);
+        document.getElementById('ref-link').textContent = 'tesira.app/ref/' + username;
+        document.getElementById('reg-scan-status').textContent = '✓ Card linked!';
+        setTimeout(goRegStep3, 600);
         return;
       }
     }
@@ -912,6 +856,72 @@
     if (stream) stream.getTracks().forEach(t => t.stop());
   }
 
+  // ── Registration Step 3: Set PIN ──
+  function goRegStep3() {
+    regPinEntry = ''; regPinConfirm = ''; regPinStage = 'enter';
+    document.getElementById('reg-step-2').classList.remove('active');
+    document.getElementById('reg-step-3').classList.add('active');
+    document.getElementById('reg-pin-lbl').textContent = 'Enter new PIN';
+    updateRegPinDots('');
+  }
+
+  function updateRegPinDots(val) {
+    for (let i = 0; i < 4; i++) {
+      const d = document.getElementById('rpd' + i);
+      d.classList.toggle('on', i < val.length);
+      d.classList.remove('err');
+    }
+  }
+
+  function regPinKey(k) {
+    const current = regPinStage === 'enter' ? regPinEntry : regPinConfirm;
+    if (current.length >= 4) return;
+    if (regPinStage === 'enter') {
+      regPinEntry += k;
+      updateRegPinDots(regPinEntry);
+      if (regPinEntry.length === 4) setTimeout(regPinNext, 300);
+    } else {
+      regPinConfirm += k;
+      updateRegPinDots(regPinConfirm);
+      if (regPinConfirm.length === 4) setTimeout(regPinSubmit, 300);
+    }
+  }
+
+  function regPinDel() {
+    if (regPinStage === 'enter') {
+      regPinEntry = regPinEntry.slice(0, -1);
+      updateRegPinDots(regPinEntry);
+    } else {
+      regPinConfirm = regPinConfirm.slice(0, -1);
+      updateRegPinDots(regPinConfirm);
+    }
+  }
+
+  function regPinNext() {
+    regPinStage = 'confirm';
+    regPinConfirm = '';
+    document.getElementById('reg-pin-lbl').textContent = 'Confirm PIN';
+    updateRegPinDots('');
+  }
+
+  function regPinSubmit() {
+    if (regPinEntry !== regPinConfirm) {
+      const err = document.getElementById('reg-pin-err');
+      err.textContent = 'PINs do not match. Try again.';
+      err.classList.add('show');
+      for (let i = 0; i < 4; i++) document.getElementById('rpd' + i).classList.add('err');
+      setTimeout(() => {
+        err.classList.remove('show');
+        regPinEntry = ''; regPinConfirm = ''; regPinStage = 'enter';
+        document.getElementById('reg-pin-lbl').textContent = 'Enter new PIN';
+        updateRegPinDots('');
+      }, 1500);
+      return;
+    }
+    userPin = regPinEntry;
+    finishReg();
+  }
+
   function finishReg() {
     show('dash');
     startCardTimer();
@@ -920,6 +930,62 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 5000);
     }, 600);
+  }
+
+  // ── Buy: open PIN overlay ──
+  function openSheet(size, val, price, orig) {
+    const actualPrice = cardActive ? price : orig;
+    cur = { size, val, price: actualPrice, orig };
+    buyPinEntry = '';
+    updateBuyPinDots('');
+    document.getElementById('buy-pin-err').classList.remove('show');
+    document.getElementById('buy-pin-lbl').textContent = '4-digit PIN';
+    document.getElementById('pin-buy-ov').classList.add('open');
+  }
+
+  function updateBuyPinDots(val) {
+    for (let i = 0; i < 4; i++) {
+      const d = document.getElementById('bpd' + i);
+      d.classList.toggle('on', i < val.length);
+      d.classList.remove('err');
+    }
+  }
+
+  function buyPinKey(k) {
+    if (buyPinEntry.length >= 4) return;
+    buyPinEntry += k;
+    updateBuyPinDots(buyPinEntry);
+    if (buyPinEntry.length === 4) setTimeout(checkBuyPin, 300);
+  }
+
+  function buyPinDel() {
+    buyPinEntry = buyPinEntry.slice(0, -1);
+    updateBuyPinDots(buyPinEntry);
+  }
+
+  function checkBuyPin() {
+    if (buyPinEntry === userPin) {
+      document.getElementById('pin-buy-ov').classList.remove('open');
+      document.getElementById('shtitle').textContent = 'Buy ' + cur.size + ' Data';
+      document.getElementById('shsub').textContent = NET + ' · ' + cur.val;
+      document.getElementById('dprice').textContent = '\u20a6' + cur.price.toLocaleString();
+      document.getElementById('phinput').value = '';
+      document.getElementById('ov').classList.add('open');
+    } else {
+      const err = document.getElementById('buy-pin-err');
+      err.textContent = 'Incorrect PIN. Try again.';
+      err.classList.add('show');
+      for (let i = 0; i < 4; i++) document.getElementById('bpd' + i).classList.add('err');
+      setTimeout(() => {
+        err.classList.remove('show');
+        buyPinEntry = '';
+        updateBuyPinDots('');
+      }, 1500);
+    }
+  }
+
+  function closePinBuy() {
+    document.getElementById('pin-buy-ov').classList.remove('open');
   }
 
   // ── Screen navigation ──
@@ -943,65 +1009,7 @@
     document.getElementById('tab-' + t).style.display = 'block';
   }
 
-  // ── Buy Sheet — opens QR scan first ──
-  function openSheet(size, val, price, orig) {
-    const actualPrice = cardActive ? price : orig;
-    cur = { size, val, price: actualPrice, orig };
-    // Show QR scan overlay
-    document.getElementById('buy-scan-status').textContent = 'Waiting for QR code...';
-    document.getElementById('qr-buy-ov').classList.add('open');
-    startBuyScan();
-  }
 
-  async function startBuyScan() {
-    try {
-      buyStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      const video = document.getElementById('buy-video');
-      video.srcObject = buyStream;
-      video.play();
-      document.getElementById('buy-scan-status').textContent = 'Camera active — scan your card';
-      scanBuyFrame();
-    } catch (e) {
-      document.getElementById('buy-scan-status').textContent = 'Camera access denied.';
-    }
-  }
-
-  function scanBuyFrame() {
-    const video = document.getElementById('buy-video');
-    const overlay = document.getElementById('wrong-card-overlay');
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
-      if (code && code.data === registeredCard) {
-        overlay.classList.remove('show');
-        stopStream(buyStream);
-        clearTimeout(buyScanLoop);
-        document.getElementById('qr-buy-ov').classList.remove('open');
-        document.getElementById('shtitle').textContent = 'Buy ' + cur.size + ' Data';
-        document.getElementById('shsub').textContent = NET + ' · ' + cur.val;
-        document.getElementById('dprice').textContent = '₦' + cur.price.toLocaleString();
-        document.getElementById('phinput').value = '';
-        document.getElementById('ov').classList.add('open');
-        return;
-      } else if (code && code.data !== registeredCard) {
-        overlay.classList.add('show');
-      } else {
-        overlay.classList.remove('show');
-      }
-    }
-    buyScanLoop = setTimeout(scanBuyFrame, 200);
-  }
-
-  function closeBuyScan() {
-    stopStream(buyStream);
-    clearTimeout(buyScanLoop);
-    document.getElementById('qr-buy-ov').classList.remove('open');
-  }
 
   function closeOv(e) {
     if (e.target === document.getElementById('ov')) document.getElementById('ov').classList.remove('open');
