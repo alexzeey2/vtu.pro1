@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Tesira</title>
+<title>Subsidi</title>
 
 <style>
   :root {
@@ -17,8 +17,8 @@
   }
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{background:var(--dark);color:var(--w);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-  .screen{display:none;min-height:100vh;flex-direction:column}
-  .screen.active{display:flex;animation:reveal .35s cubic-bezier(.22,1,.36,1)}
+  .screen{display:none;position:fixed;inset:0;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+  .screen.active{display:flex;z-index:1;animation:reveal .35s cubic-bezier(.22,1,.36,1)}
   @keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
   /* ── REGISTER ── */
@@ -250,14 +250,14 @@
 <!-- ── REGISTRATION SCREEN ── -->
 <div class="screen active" id="reg-screen">
   <div class="bg-glow"></div>
-  <div class="wordmark">tesira<span class="wdot"></span></div>
+  <div class="wordmark">subsidi<span class="wdot"></span></div>
   <div class="tagline">Data. Redefined.</div>
 
   <div class="reg-box">
 
     <!-- Step 1: Scan QR card -->
     <div class="reg-step active" id="reg-step-2">
-      <div class="reg-title">Scan your Tesira card</div>
+      <div class="reg-title">Scan your Subsidi card</div>
       <div class="reg-sub">Hold your card up to the camera — we'll set you up automatically</div>
 
       <div style="position:relative;width:100%;border-radius:20px;overflow:hidden;margin-bottom:20px;background:var(--dark-3);border:1px solid var(--border);">
@@ -313,7 +313,7 @@
   <div class="header">
     <div class="hglow"></div>
     <div class="topbar">
-      <div class="brand">tesira<span class="bpip"></span></div>
+      <div class="brand">subsidi<span class="bpip"></span></div>
       <div class="topbar-icons">
         <div class="ci-icon" onclick="show('checkin-screen')" title="Daily Check-in">
           <div class="ci-badge"></div>
@@ -334,7 +334,7 @@
     </div>
 
     <div class="bal-lbl">Wallet Balance</div>
-    <div class="bal-amt" id="bal-display"><span class="bal-cur">₦</span>1,000<span class="bal-dec">.00</span></div>
+    <div class="bal-amt" id="bal-display"><span class="bal-cur">₦</span>500<span class="bal-dec">.00</span></div>
     <div class="badge" id="card-badge" onclick="badgeTap()"><span class="pip"></span>Card Active</div>
   </div>
 
@@ -539,9 +539,9 @@
   <div class="sec" id="refblock" style="display:none">
     <div class="ref-card">
       <div class="ref-title">Refer & Earn ₦500</div>
-      <div class="ref-sub">Share your link. When a friend purchases a Tesira card, ₦500 is credited to your wallet instantly.</div>
+      <div class="ref-sub">Share your link. When a friend purchases a Subsidi card, ₦500 is credited to your wallet instantly.</div>
       <div class="ref-row">
-        <div class="ref-code" id="ref-link">tesira.app/ref/USER</div>
+        <div class="ref-code" id="ref-link">subsidi.app/ref/USER</div>
         <div class="copy" id="copybtn" onclick="doCopy()">Copy</div>
       </div>
     </div>
@@ -669,7 +669,7 @@
       </svg>
     </div>
     <div style="font-family:'Georgia',serif;font-size:22px;font-style:italic;margin-bottom:8px;">Card Expired</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:6px;">Your Tesira card has expired.</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:6px;">Your Subsidi card has expired.</div>
     <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:600;margin-bottom:28px;">₦200 will be deducted from your wallet to reactivate your card.</div>
     <div style="display:flex;gap:10px;">
       <button onclick="cancelReactivate()" style="flex:1;padding:16px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:14px;color:rgba(255,255,255,0.5);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
@@ -801,6 +801,8 @@
   }
 
   // ── Registration QR Scanner — auto-starts on page load ──
+  window.addEventListener("load", () => { startRegScan(); });
+
   async function startRegScan() {
     try {
       regStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -825,7 +827,7 @@
   }
 
   // Auto-start camera when page loads
-  window.addEventListener('load', startRegScan);
+  // auto start handled below
 
   function scanRegFrame() {
     const video = document.getElementById('reg-video');
@@ -843,7 +845,7 @@
         registeredCard = code.data;
         cardSecret = extractSecret(code.data);
         username = generateUsername(code.data);
-        document.getElementById('ref-link').textContent = 'tesira.app/ref/' + username;
+        document.getElementById('ref-link').textContent = 'subsidi.app/ref/' + username;
         document.getElementById('reg-scan-status').textContent = '✓ Card linked!';
         setTimeout(goRegStep3, 600);
         return;
